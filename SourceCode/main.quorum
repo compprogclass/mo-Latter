@@ -1,0 +1,146 @@
+        use Libraries.Game.Game
+use Libraries.Game.Audio3D
+use Libraries.System.File
+use Libraries.Interface.Events.KeyboardEvent
+use Libraries.Game.InputMonitor
+use Libraries.Interface.Events.KeyboardListener
+use Libraries.Sound.Speech
+
+class Main is Game
+    Audio3D sound 
+    Audio3D walking
+    Audio3D beep
+    Audio3D fall
+    Audio3D welcome
+Audio3D backgroundmusic
+Audio3D top
+    InputMonitor press
+    KeyboardEvent key
+number vol = 0.5
+number vol1 = 0.5
+Speech talk
+
+    action Main
+        StartGame()
+    end
+
+    action CreateGame
+        sound:Load("forest.ogg")    
+        walking:Load("walking.ogg")
+        beep:Load("Fwip.ogg")        
+        fall:Load("Robot.ogg")
+welcome:Load("Welcome.ogg")
+backgroundmusic:Load("Dance.wav")
+top:Load("surprise.wav")
+beep:SetVolume(vol)
+        walking:SetX(0)
+        walking:SetY(0)
+        walking:SetZ(0)
+        sound:SetX(50)
+        sound:SetY(0)
+        sound:SetZ(0)
+        sound:SetListenerPosition(0,0,0)
+        sound:SetListenerDirection(0,0,0)
+        sound:EnableLooping()
+        sound:Play()
+        beep:Play()
+
+        walking:Play()
+welcome:Play()
+backgroundmusic:Play()
+//top:Play()
+    end
+    action Update(number seconds)
+       beep:Play()
+        Push(press)
+            backgroundmusic:EnableLooping()
+    end
+
+action Push ( InputMonitor press)
+        if press:IsKeyPressed(key:ESCAPE)
+            Exit()
+        end
+        
+        if press:IsKeyPressed(key:LEFT)
+        Move(key:LEFT)
+        //output "left"
+        end
+        
+        if press:IsKeyPressed(key:RIGHT)
+        Move(key:RIGHT)
+           
+        end
+        if press:IsKeyPressed(key:DOWN)
+        vol = vol -0.1
+        beep:SetVolume(vol)    
+        Move(key:DOWN)
+        end 
+        if press:IsKeyPressed(key: UP)
+                        vol = vol +0.1
+        beep:SetVolume(vol)
+Move(key:UP)
+        end
+    if beep:GetVolume()=0 and fall:IsPlaying()=false
+        fall:Play()
+    end
+if beep:GetVolume()=1.0 and top:IsPlaying()=false
+        top:Play()
+end
+end
+    action Move(number direction)
+    //Get the x and y position of sound
+    number backgroundx = sound:GetX()
+    number backgroundz = sound:GetZ()
+    number backgroundy = sound:GetY()
+    number distance = 10
+    number balance = sound:GetBalance()
+    number volume = sound:GetVolume()
+    // Have 4 if statements to find out
+    if direction = key:UP
+        sound:SetBalance(0)
+output "up"
+output beep:GetVolume()
+sound:Play()
+        sound:SetY(backgroundy+distance)        
+        walking:PlayUntilDone()
+    end
+    if direction = key:DOWN
+        sound:SetBalance(0)
+output"down"
+output  beep:GetVolume()
+         sound:Play()
+        //talk:Say(cast(text,volume))
+        sound:SetY(backgroundy-distance)
+        walking:PlayUntilDone()
+
+end
+if volume < vol1
+    fall:Play()
+    end
+    if direction = key:LEFT
+        number current = sound:GetBalance()
+        sound:SetX(backgroundx+distance)
+        output "left"
+        sound:SetY(backgroundy+distance)
+        sound:SetZ(backgroundz+distance)
+        sound:SetBalance(current-0.1)
+        output sound:GetBalance()
+        sound:Play()
+
+        walking:PlayUntilDone()
+        end
+    if direction = key:RIGHT
+output "right"
+        number currentright = sound:GetBalance()
+        sound:SetBalance(currentright+0.1)
+        output sound:GetBalance()
+        sound:Play()
+        //sound:SetY(backgroundy-distance)
+        walking:PlayUntilDone()
+end
+
+
+//output "Move"
+    end
+
+end
